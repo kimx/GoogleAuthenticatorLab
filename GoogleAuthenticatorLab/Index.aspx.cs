@@ -1,5 +1,4 @@
-﻿using Base32;
-using OtpSharp;
+﻿using OtpNet;
 using QRCoder;
 using System;
 using System.Collections.Generic;
@@ -28,10 +27,11 @@ namespace GoogleAuthenticatorLab
         {
             byte[] secretByte = KeyGeneration.GenerateRandomKey(20);
             string userName = "Kimxinfo";
-            string barcodeUrl = KeyUrl.GetTotpUrl(secretByte, userName) + "&issuer=GoogleAuthenticatorLab";
+            string secretKey = Base32Encoding.ToString(secretByte);
+            string barcodeUrl = $"otpauth://totp/{userName}?secret={secretKey}&issuer=GoogleAuthenticatorLab";
             var model = new GoogleAuthenticatorModel
             {
-                SecretKey = Base32Encoder.Encode(secretByte),
+                SecretKey = secretKey,
                 BarcodeUrl = barcodeUrl
             };
             return model;
@@ -66,7 +66,7 @@ namespace GoogleAuthenticatorLab
 
         protected void btnVerify_Click(object sender, EventArgs e)
         {
-            byte[] secretKey = Base32Encoder.Decode(lblSecretKey.Text);
+            byte[] secretKey = Base32Encoding.ToBytes(lblSecretKey.Text);
 
             long timeStepMatched = 0;//當目前代碼驗證成功後,會得一個流水號,第二次比對成功也是同樣號,可以用來比對同一代碼不能被用第2次
             var otp = new Totp(secretKey);
