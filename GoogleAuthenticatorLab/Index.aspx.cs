@@ -70,7 +70,7 @@ namespace GoogleAuthenticatorLab
 
             long timeStepMatched = 0;//當目前代碼驗證成功後,會得一個流水號,第二次比對成功也是同樣號,可以用來比對同一代碼不能被用第2次
             var otp = new Totp(secretKey);
-            if (otp.VerifyTotp(txtCode.Text.Trim(), out timeStepMatched, new VerificationWindow(2, 2)))
+            if (otp.VerifyTotp(txtCode.Text.Trim(), out timeStepMatched, new VerificationWindow()))//STEP :30 預設值30秒產生一次,VerificationWindow 決定前後幾次可以接收,預設0,0,只接收當下
             {
                 lblVerifyResult.Text = "Success";
             }
